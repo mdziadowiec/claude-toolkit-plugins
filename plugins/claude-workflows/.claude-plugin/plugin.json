@@ -1,7 +1,7 @@
 {
   "name": "claude-workflows",
   "displayName": "Claude Workflow Skills",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Workflow and discipline skills for Claude Code: crisp (concise output), karpathy (coding discipline), handoff (session handoff notes), and doc-coauthoring (structured documentation). Includes the /export-md command to export the current session to markdown via cc2md (run /install-tools once to provision cc2md).",
   "author": {
     "name": "Maciej Dziadowiec"
