@@ -49,7 +49,22 @@ the user and stop rather than exporting the wrong session.
   (`--collapse`), which keeps the file readable. Add `--thinking` only if the user
   asks to include reasoning blocks.
 
-Report the written file path to the user.
+## Step 4 — Repair nested code fences
+
+cc2md (v0.1.0) wraps each tool output in a 3-backtick fence without lengthening it
+when the output itself contains ``` fences (README fetches, file reads, files
+written). The inner fence then closes the wrapper early and the rest of the
+document mis-renders. Always run the bundled repair pass over the exported file:
+
+```
+pwsh -NoProfile -ExecutionPolicy Bypass -File "${CLAUDE_PLUGIN_ROOT}/scripts/fix-fences.ps1" -Path "<output-file>"
+```
+
+(Use `powershell` instead of `pwsh` if PowerShell 7+ is unavailable.) It lengthens
+only the wrapper fences inside `<details>` blocks — prose is untouched — so embedded
+``` blocks render as literal output. It reports how many wrappers it repaired.
+
+Then report the written file path to the user.
 
 ## Installing cc2md (only if missing)
 

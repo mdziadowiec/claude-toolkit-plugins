@@ -1,0 +1,4 @@
+# Session-export artifacts (produced by /export-md and the built-in /export)
+*-session.md
+.md.txt
+/20??-??-??-*.txt
