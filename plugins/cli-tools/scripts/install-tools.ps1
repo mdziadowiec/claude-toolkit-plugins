@@ -98,7 +98,11 @@ $wingetTools = @(
     @{ Tool = 'fzf';       Id = 'junegunn.fzf' },
     @{ Tool = 'jq';        Id = 'jqlang.jq' },
     @{ Tool = 'yq';        Id = 'MikeFarah.yq' },
-    @{ Tool = 'hyperfine'; Id = 'sharkdp.hyperfine' }
+    @{ Tool = 'hyperfine'; Id = 'sharkdp.hyperfine' },
+    @{ Tool = 'bat';       Id = 'sharkdp.bat' },
+    @{ Tool = 'gron';      Id = 'TomHudson.gron' },
+    @{ Tool = 'sd';        Id = 'chmln.sd' },
+    @{ Tool = 'ast-grep';  Id = 'ast-grep.ast-grep' }
 )
 Write-Host "`nwinget tools:" -ForegroundColor White
 foreach ($t in $wingetTools) {

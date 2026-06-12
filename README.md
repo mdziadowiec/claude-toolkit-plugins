@@ -33,7 +33,7 @@ This runs a bundled, **idempotent** PowerShell script — tools already on `PATH
 
 | Tools | Source |
 |---|---|
-| `rg`, `fd`, `fzf`, `jq`, `yq`, `hyperfine` | winget |
+| `rg`, `fd`, `fzf`, `jq`, `yq`, `hyperfine`, `bat`, `gron`, `sd`, `ast-grep` | winget |
 | `jc` | pip (`--user`) |
 | `rga`, `poppler` *(optional)* | scoop (auto-installs scoop if missing) |
 
@@ -52,9 +52,13 @@ See [`plugins/cli-tools/README.md`](plugins/cli-tools/README.md) for options and
 | fd-file-search | `/cli-tools:fd-file-search` | Find files by name / extension / path / type |
 | rg-fzf-dotnet | `/cli-tools:rg-fzf-dotnet` | Content & symbol search with ripgrep + fzf |
 | rga | `/cli-tools:rga` | Search inside PDFs, Office docs, e-books, archives, SQLite |
+| ast-grep | `/cli-tools:ast-grep` | Structural (AST-aware) code search and rewrite |
 | jc | `/cli-tools:jc` | Convert CLI output / file formats to JSON |
 | jq-json-processor | `/cli-tools:jq-json-processor` | Filter and transform JSON |
 | yq | `/cli-tools:yq` | Query / edit / convert YAML, JSON, XML, TOML, CSV |
+| gron | `/cli-tools:gron` | Flatten JSON into greppable lines (and back) |
+| sd | `/cli-tools:sd` | Intuitive find-and-replace (sed alternative) |
+| bat | `/cli-tools:bat` | View files with syntax highlighting + line numbers |
 | hyperfine | `/cli-tools:hyperfine` | Statistical CLI benchmarking |
 
 ### claude-workflows
