@@ -54,14 +54,15 @@ Report the written file path to the user.
 ## Installing cc2md (only if missing)
 
 Prefer the bundled installer — it downloads the prebuilt GitHub release binary
-into `$HOME/.claude/bin` and adds it to PATH (Windows):
+into `$HOME/.claude/bin` and adds it to PATH (Windows, PowerShell 7+):
 
 ```
 pwsh -NoProfile -ExecutionPolicy Bypass -File "${CLAUDE_PLUGIN_ROOT}/scripts/install-tools.ps1"
 ```
 
-(Fall back to `powershell` instead of `pwsh` if PowerShell 7+ is unavailable.)
 This is the same script run by the `/install-tools` command for this plugin.
+(The script also runs under Windows PowerShell 5.1 — use `powershell` if `pwsh`
+is unavailable.)
 
 If you can't run the script, install manually instead — prefer
 `go install github.com/magarcia/cc2md@latest` if Go is on PATH, otherwise download
