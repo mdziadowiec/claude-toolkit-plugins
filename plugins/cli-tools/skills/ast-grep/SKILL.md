@@ -72,3 +72,8 @@ ast-grep run -p 'catch ($$$) { }' -l csharp --json src/ \
   structure actually matters.
 - The binary is `ast-grep`; the `sg` alias may collide with other tools on Windows — prefer the
   full name in scripts.
+- ast-grep operates on file paths, not stdin, by default. To match against piped input you **must**
+  pass `--stdin` — a bare `ast-grep run -p '<pattern>' -l <lang>` reading from a pipe exits 1:
+  ```bash
+  printf 'def f(): print("hi")\n' | ast-grep run -p 'print($A)' -l python --stdin
+  ```
