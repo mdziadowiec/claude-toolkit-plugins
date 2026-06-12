@@ -1,0 +1,12 @@
+{
+  "name": "cli-tools",
+  "displayName": "CLI Toolkit",
+  "version": "1.0.0",
+  "description": "Token-efficient CLI workflow skills (rg, fd, fzf, jq, jc, yq, rga, hyperfine) plus an install command that provisions the underlying tools on Windows.",
+  "author": {
+    "name": "Maciej Dziadowiec"
+  },
+  "repository": "https://github.com/mdziadowiec/claude-toolkit-plugins",
+  "license": "MIT",
+  "keywords": ["cli", "ripgrep", "fd", "fzf", "jq", "jc", "yq", "rga", "hyperfine", "search", "json"]
+}

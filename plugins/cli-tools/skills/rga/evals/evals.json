@@ -1,0 +1,42 @@
+{
+  "skill_name": "rga",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I have a folder at D:\\Research\\Papers full of PDF files — probably 300+ of them. I need to find all papers that mention 'neural network' or 'deep learning'. What's the most efficient way to search through them?",
+      "expected_output": "Agent recommends rga with correct flags for PDF search, uses format glob, suggests -l first for large directories, provides a ready-to-run command.",
+      "files": [],
+      "expectations": [
+        "Agent recommends rga (not rg or manual tools) for PDF search",
+        "Agent uses -g '*.pdf' or equivalent format filter",
+        "Agent uses --smart-case flag",
+        "Agent suggests -l (files-with-matches) as a faster first step given 300+ files",
+        "Agent provides a complete, executable command with the correct path"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "I downloaded a bunch of zip files from a vendor to C:\\Downloads\\vendor-archives. I need to check if any of them contain configuration files or scripts that mention 'db_password' or 'database_password'. What's the best approach?",
+      "expected_output": "Agent recommends rga for searching inside zip archives, provides correct glob for zip files, uses pattern that handles both password variants.",
+      "files": [],
+      "expectations": [
+        "Agent recommends rga for searching inside zip archive contents",
+        "Agent uses -g '*.zip' or similar archive glob",
+        "Agent constructs a pattern that matches both 'db_password' and 'database_password' (regex alternation or two runs)",
+        "Agent provides a complete command with the correct Windows path"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "I need to search through all the .docx files in my C:\\Work\\Contracts directory for the exact phrase 'force majeure'. There are about 200 documents. How do I do this efficiently?",
+      "expected_output": "Agent recommends rga with --fixed-strings for exact phrase, uses docx glob, handles the multi-document scale efficiently.",
+      "files": [],
+      "expectations": [
+        "Agent recommends rga (not rg) for .docx file search",
+        "Agent uses --fixed-strings (or -F) for exact phrase matching",
+        "Agent uses -g '*.docx' format filter",
+        "Agent provides a complete, executable command with the correct path"
+      ]
+    }
+  ]
+}
