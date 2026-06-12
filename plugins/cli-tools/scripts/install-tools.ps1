@@ -4,9 +4,12 @@
 
 .DESCRIPTION
     Idempotent: each tool is only installed if its command is not already on PATH.
-    winget tools: rg, fd, fzf, jq, yq, hyperfine
-    pip tool:     jc
+    winget tools: rg, fd, fzf, jq, yq, hyperfine, bat, gron, sd, ast-grep
+    pip tool:     jc (auto-installs a real Python via winget if only the Windows
+                  Store stub is present, then puts the --user Scripts dir on PATH)
     scoop tools:  rga (ripgrep-all), poppler (optional, for rga PDF extraction)
+                  scoop bootstrap forces TLS 1.2 so the get.scoop.sh fetch does not
+                  fail with a security error under Windows PowerShell 5.1.
 
     A per-tool failure is reported but does not abort the rest of the run.
     Re-run after installation if PATH changes have not taken effect in the current shell.
@@ -35,6 +38,41 @@ function Test-Cmd {
 function Add-Result {
     param([string]$Tool, [string]$Status, [string]$Detail = '')
     $results.Add([pscustomobject]@{ Tool = $Tool; Status = $Status; Detail = $Detail })
+}
+
+# Re-read PATH from the registry into the current process so freshly installed
+# tools resolve without reopening the terminal.
+function Update-ProcessPath {
+    $machine = [System.Environment]::GetEnvironmentVariable('Path', 'Machine')
+    $user    = [System.Environment]::GetEnvironmentVariable('Path', 'User')
+    $env:Path = (@($machine, $user) | Where-Object { $_ }) -join ';'
+}
+
+# Append a directory to the persistent *user* PATH (and the current process) if absent.
+function Add-ToUserPath {
+    param([string]$Dir)
+    if (-not $Dir -or -not (Test-Path $Dir)) { return $false }
+    $userPath = [System.Environment]::GetEnvironmentVariable('Path', 'User')
+    $parts = @($userPath -split ';' | Where-Object { $_ -ne '' })
+    if ($parts -notcontains $Dir) {
+        [System.Environment]::SetEnvironmentVariable('Path', ($userPath.TrimEnd(';') + ';' + $Dir), 'User')
+    }
+    if (($env:Path -split ';') -notcontains $Dir) { $env:Path = $env:Path.TrimEnd(';') + ';' + $Dir }
+    return $true
+}
+
+# True only for a REAL python that can install packages. The Windows Store
+# execution-alias stub lives under WindowsApps and answers `python` but cannot
+# pip-install anything -- it must not be treated as a usable interpreter.
+function Test-RealPython {
+    param([string]$Name)
+    $cmd = Get-Command $Name -ErrorAction SilentlyContinue
+    if (-not $cmd) { return $false }
+    if ($cmd.Source -and $cmd.Source -match '\\WindowsApps\\') { return $false }
+    try {
+        $v = & $Name --version 2>$null
+        return [bool]$v
+    } catch { return $false }
 }
 
 function Install-Tool {
@@ -73,7 +111,11 @@ $hasWinget = Test-Cmd 'winget'
 $hasScoop  = Test-Cmd 'scoop'
 $pip = $null
 foreach ($c in @('pip3', 'pip')) { if (Test-Cmd $c) { $pip = $c; break } }
-if (-not $pip -and (Test-Cmd 'python')) { $pip = 'python -m pip' }
+if (-not $pip) {
+    foreach ($py in @('python3', 'python', 'py')) {
+        if (Test-RealPython $py) { $pip = "$py -m pip"; break }
+    }
+}
 
 if (-not $hasWinget) {
     Write-Host "winget not found. Install 'App Installer' from the Microsoft Store, then re-run." -ForegroundColor Red
@@ -83,8 +125,14 @@ if (-not $hasWinget) {
 if (-not $hasScoop) {
     Write-Host "scoop not found (required for rga). Installing scoop ..." -ForegroundColor Cyan
     try {
-        Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
+        # Windows PowerShell 5.1 negotiates TLS 1.0/1.1 by default, which get.scoop.sh
+        # rejects -> "Could not establish trust relationship" / security error. Force TLS 1.2.
+        [System.Net.ServicePointManager]::SecurityProtocol = `
+            [System.Net.ServicePointManager]::SecurityProtocol -bor [System.Net.SecurityProtocolType]::Tls12
+        # Process-scope bypass so the bootstrap's child process isn't blocked by execution policy.
+        Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force
         Invoke-RestMethod -Uri 'https://get.scoop.sh' | Invoke-Expression
+        Update-ProcessPath   # scoop adds ~\scoop\shims to user PATH; pick it up now
         $hasScoop = Test-Cmd 'scoop'
     } catch {
         Write-Host "  [fail] scoop install: $($_.Exception.Message)" -ForegroundColor Red
@@ -118,11 +166,38 @@ foreach ($t in $wingetTools) {
 Write-Host "`npip tool:" -ForegroundColor White
 if (Test-Cmd 'jc') {
     Install-Tool 'jc' { } 'jc'
-} elseif ($pip) {
-    Install-Tool 'jc' { Invoke-Expression "$pip install --user jc" } 'jc'
 } else {
-    Add-Result 'jc' 'SKIPPED' 'no pip/python found'
-    Write-Host "  [skip] jc : no pip/python on PATH" -ForegroundColor Yellow
+    # No usable interpreter? The only `python` is often the Windows Store stub, which
+    # cannot install packages. Provision a real Python via winget before continuing.
+    if (-not $pip) {
+        if ($hasWinget) {
+            Write-Host "  no usable Python found (Store stub does not count); installing Python via winget ..." -ForegroundColor Cyan
+            try {
+                winget install --exact --id Python.Python.3.13 --accept-source-agreements --accept-package-agreements --silent
+                Update-ProcessPath
+                foreach ($py in @('python', 'python3', 'py')) {
+                    if (Test-RealPython $py) { $pip = "$py -m pip"; break }
+                }
+            } catch {
+                Write-Host "  [fail] Python install: $($_.Exception.Message)" -ForegroundColor Red
+            }
+        } else {
+            Write-Host "  [skip] jc : no usable Python and winget unavailable to install one" -ForegroundColor Yellow
+        }
+    }
+    if ($pip) {
+        Install-Tool 'jc' {
+            Invoke-Expression "$pip install --user jc"
+            # pip --user console scripts land in %APPDATA%\Python\Python<ver>\Scripts,
+            # which is not on PATH by default -- find jc.exe there and add its dir.
+            $userPyRoot = Join-Path $env:APPDATA 'Python'
+            $jcExe = Get-ChildItem -Path $userPyRoot -Filter 'jc.exe' -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1
+            if ($jcExe) { [void](Add-ToUserPath $jcExe.DirectoryName) }
+        } 'jc'
+    } else {
+        Add-Result 'jc' 'SKIPPED' 'no usable Python/pip (Windows Store stub does not count)'
+        Write-Host "  [skip] jc : no usable Python/pip on PATH" -ForegroundColor Yellow
+    }
 }
 
 # --- scoop tools: rga (+ poppler) ----------------------------------------
