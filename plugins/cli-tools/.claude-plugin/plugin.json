@@ -1,7 +1,7 @@
 {
   "name": "cli-tools",
   "displayName": "CLI Toolkit",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Token-efficient CLI workflow skills (rg, fd, fzf, jq, jc, yq, rga, hyperfine, gron, bat, sd, ast-grep) plus an install command that provisions the underlying tools on Windows.",
   "author": {
     "name": "Maciej Dziadowiec"
