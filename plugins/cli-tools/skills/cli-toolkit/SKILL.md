@@ -2,16 +2,18 @@
 name: cli-toolkit
 description: >
   Multi-tool CLI pipelines for token-efficient agentic work — combining fd, rg, fzf, jc, jq,
-  and yq into cross-tool workflows. Use this skill when combining two or more CLI tools
-  (fd+rg, rg+jc+jq, rg+fzf, yq+jq), when output is too large and needs bounding, when
-  deciding which pipeline to use for a task, when quoting rules differ between WSL Bash /
-  PowerShell / cmd.exe, or when preparing an agent handoff paste.
+  yq, gron, bat, sd, and ast-grep into cross-tool workflows. Use this skill when combining two
+  or more CLI tools (fd+rg, rg+jc+jq, rg+fzf, yq+jq, gron+rg, rg+sd, ast-grep+jq), when output
+  is too large and needs bounding, when deciding which pipeline to use for a task, when quoting
+  rules differ between WSL Bash / PowerShell / cmd.exe, or when preparing an agent handoff paste.
 allowed-tools: Bash, PowerShell
 ---
 
 # cli-toolkit — Multi-Tool Pipeline Reference
 
-For deep flag reference and examples for any individual tool, load its own skill: `/fd-file-search`, `/rg-fzf-dotnet`, `/jc`, `/jq-json-processor`, `/yq`.
+For deep flag reference and examples for any individual tool, load its own skill: `/fd-file-search`, `/rg-fzf-dotnet`, `/jc`, `/jq-json-processor`, `/yq`, `/gron`, `/bat`, `/sd`, `/ast-grep`.
+
+**Tool roles at a glance:** fd (find files) · rg (search text) · ast-grep (search code *structure*) · fzf (fuzzy-rank) · bat (view, highlighted) · jc (CLI output → JSON) · jq (filter JSON) · yq (YAML/XML/TOML ↔ JSON) · gron (flatten JSON to greppable lines) · sd (find & replace).
 
 ---
 
@@ -43,6 +45,10 @@ Choose a pipeline based on what you have and what you want:
 | rg structured output → filter (skip jc) | `rg --json ... \| head -n 200 \| jq -c 'select(.type=="match") \| ...'` | `/rg-fzf-dotnet` + `/jq-json-processor` |
 | YAML/XML config → JSON → filter | `yq -o json '.' <file> \| jq -c <filter>` | `/yq` + `/jq-json-processor` |
 | File metadata → structured query | `fd <pattern> \| xargs stat \| jc --stat \| jq -c <filter>` | `/fd-file-search` + `/jc` |
+| Explore unfamiliar JSON / find a key's path | `gron <file> \| rg <key>` (add `\| gron -u` to rebuild) | `/gron` + `/rg-fzf-dotnet` |
+| Search code by *structure*, not text | `ast-grep run -p '<pattern>' -l <lang> .` | `/ast-grep` |
+| Search-and-replace across matched files | `rg -l <pat> -g <glob> \| xargs sd '<find>' '<replace>'` | `/rg-fzf-dotnet` + `/sd` |
+| View a bounded, highlighted slice for citation | `bat --paging=never -n -r <a>:<b> <file>` | `/bat` |
 
 ---
 
@@ -130,6 +136,31 @@ yq -o json '.' <config.yml> | jq -c '<filter>'
 yq -o json '.' docker-compose.yml | jq -r '.services | to_entries[] | {name: .key, image: .value.image}'
 ```
 → See `/yq` and `/jq-json-processor`.
+
+### Recipe 7 — gron → rg: find a path in unfamiliar JSON, then rebuild
+Use when you can see a value but don't know its jq path, or to grep deeply nested JSON.
+```bash
+gron response.json | rg -i "<key-or-value>"                 # discover the path
+gron response.json | rg '^json\.data\.users\[\d+\]\.email' | gron -u   # extract + rebuild JSON
+```
+→ See `/gron`; once the path is known, prefer a single `jq` projection for repeat extracts.
+
+### Recipe 8 — ast-grep → jq: structural match, minimal report
+Use when a text search is too noisy and you need a code *shape* (call arity, construct).
+```bash
+ast-grep run -p 'catch ($$$) { }' -l csharp --json src/ \
+  | jq -c '.[] | {file, line: .range.start.line}' | head -n 50
+```
+→ See `/ast-grep` (search) and `/jq-json-processor` (projection).
+
+### Recipe 9 — rg -l → sd: scoped search-and-replace
+Use to rewrite a symbol or string only in files that actually contain it. Preview first.
+```bash
+rg -l 'OldName' -g '*.cs' | xargs sd -p 'OldName' 'NewName'   # PREVIEW the diff
+rg -l 'OldName' -g '*.cs' | xargs sd    'OldName' 'NewName'   # apply (in place, no backup)
+rg -c 'NewName' -g '*.cs' .                                   # verify after
+```
+→ See `/rg-fzf-dotnet` and `/sd`. Run via the **Bash tool** so `xargs` receives the byte stream.
 
 ---
 
