@@ -37,8 +37,7 @@ This runs a bundled, **idempotent** PowerShell script — tools already on `PATH
 | `jc` | pip (`--user`) |
 | `rga`, `poppler` *(optional)* | scoop (auto-installs scoop if missing) |
 
-Append `-SkipPoppler` to skip the optional PDF backend, and reopen the terminal afterward so
-new tools land on `PATH`. See [`plugins/cli-tools/README.md`](plugins/cli-tools/README.md) for details.
+See [`plugins/cli-tools/README.md`](plugins/cli-tools/README.md) for options and details.
 
 > The installer is Windows-only by design. On macOS/Linux, install the equivalents with your
 > package manager (`brew`, `apt`, `dnf`, …) — the skills themselves are cross-platform.
