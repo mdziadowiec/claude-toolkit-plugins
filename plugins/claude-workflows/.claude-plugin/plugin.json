@@ -1,0 +1,12 @@
+{
+  "name": "claude-workflows",
+  "displayName": "Claude Workflow Skills",
+  "version": "1.0.0",
+  "description": "Workflow and discipline skills for Claude Code: crisp (concise output), karpathy (coding discipline), handoff (session handoff notes), and doc-coauthoring (structured documentation).",
+  "author": {
+    "name": "Maciej Dziadowiec"
+  },
+  "repository": "https://github.com/mdziadowiec/claude-toolkit-plugins",
+  "license": "MIT",
+  "keywords": ["workflow", "crisp", "karpathy", "handoff", "documentation", "discipline"]
+}

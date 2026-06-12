@@ -1,0 +1,19 @@
+{
+  "name": "claude-toolkit-plugins",
+  "owner": {
+    "name": "Maciej Dziadowiec"
+  },
+  "description": "CLI toolkit and Claude workflow skills, split into two installable plugins.",
+  "plugins": [
+    {
+      "name": "cli-tools",
+      "source": "./plugins/cli-tools",
+      "description": "Token-efficient CLI workflow skills (rg, fd, fzf, jq, jc, yq, rga, hyperfine) plus a Windows install command for the underlying tools."
+    },
+    {
+      "name": "claude-workflows",
+      "source": "./plugins/claude-workflows",
+      "description": "Workflow and discipline skills: crisp, karpathy, handoff, doc-coauthoring."
+    }
+  ]
+}
