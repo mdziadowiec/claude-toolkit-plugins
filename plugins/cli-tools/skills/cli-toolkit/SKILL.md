@@ -5,7 +5,7 @@ description: >
   yq, gron, bat, sd, and ast-grep into cross-tool workflows. Use this skill when combining two
   or more CLI tools (fd+rg, rg+jc+jq, rg+fzf, yq+jq, gron+rg, rg+sd, ast-grep+jq), when output
   is too large and needs bounding, when deciding which pipeline to use for a task, when quoting
-  rules differ between WSL Bash / PowerShell / cmd.exe, or when preparing an agent handoff paste.
+  rules differ between Git Bash / pwsh / cmd.exe, or when preparing an agent handoff paste.
 allowed-tools: Bash, PowerShell
 ---
 
@@ -164,15 +164,29 @@ rg -c 'NewName' -g '*.cs' .                                   # verify after
 
 ---
 
-## 4 — Platform quoting
+## 4 — Platform quoting & shell choice
+
+On Windows, run native-tool pipelines (`rg | jq`, `fd | xargs …`) through the **Bash tool (Git Bash)** — it passes raw byte streams between executables unchanged, so nothing can re-encode and corrupt matches. That is the default for every recipe above.
+
+When you genuinely need PowerShell (object pipelines, `Select-Object`, `Measure-Object`, Windows-only cmdlets), use **PowerShell 7 (`pwsh`)** rather than Windows PowerShell 5.1 — its pipe I/O is markedly safer:
+
+- `$OutputEncoding` defaults to **UTF-8**, so text piped between native tools keeps Unicode intact. 5.1 re-encodes that stream (ASCII/UTF-16) and silently mangles non-ASCII bytes — a real footgun for source search.
+- Supports `&&` / `||` chaining and does **not** wrap a native command's stderr as a terminating `NativeCommandError`, so exit-code logic behaves like Bash.
+
+If the harness PowerShell tool is 5.1, invoke pwsh explicitly (it runs fine via the Bash tool too):
+```
+pwsh -NoProfile -Command 'rg --vimgrep -S -e "<pat>" . | Select-Object -First 80'
+```
+
+**Quoting:**
 
 | Shell | jq filter quoting | rg / fd pattern quoting |
 |---|---|---|
-| **WSL Bash** | `jq '.items[] \| {id, name}'` — single quotes | `rg -e 'pattern'` — single quotes |
-| **PowerShell** | `jq '.items[] \| {id, name}'` — single quotes work | `rg -e 'pattern'` — single quotes work |
+| **Bash (Git Bash)** | `jq '.items[] \| {id, name}'` — single quotes | `rg -e 'pattern'` — single quotes |
+| **pwsh / PowerShell** | `jq '.items[] \| {id, name}'` — single quotes work | `rg -e 'pattern'` — single quotes work |
 | **cmd.exe** | `jq ".items[] \| {id, name}"` — double quotes; escape `\|` as `^|` | `rg -e "pattern"` — double quotes |
 
-PowerShell's `|` is always the PS pipeline operator and passes objects, not raw text. When a pipeline must pass raw byte streams between native executables (e.g. `rg | jq`), run the command via the **Bash tool** (WSL) to guarantee correct stream passing.
+PowerShell's `|` is always the PS pipeline operator (passes objects, not raw text). For the heaviest native→native byte streams, prefer the **Bash tool** regardless of which PowerShell is installed.
 
 ---
 
