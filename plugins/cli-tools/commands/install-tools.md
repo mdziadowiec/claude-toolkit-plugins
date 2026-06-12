@@ -17,6 +17,10 @@ them via winget, pip, and scoop. It is **idempotent** — tools already on PATH 
 | `jq` | winget `jqlang.jq` | jq-json-processor, cli-toolkit |
 | `yq` | winget `MikeFarah.yq` | yq, cli-toolkit |
 | `hyperfine` | winget `sharkdp.hyperfine` | hyperfine |
+| `bat` | winget `sharkdp.bat` | bat, cli-toolkit |
+| `gron` | winget `TomHudson.gron` | gron, cli-toolkit |
+| `sd` | winget `chmln.sd` | sd, cli-toolkit |
+| `ast-grep` | winget `ast-grep.ast-grep` | ast-grep, cli-toolkit |
 | `jc` | pip `jc` | jc, cli-toolkit |
 | `rga` (ripgrep-all) | scoop `ripgrep-all` | rga |
 | `poppler` (optional) | scoop `poppler` | rga (PDF text extraction) |
