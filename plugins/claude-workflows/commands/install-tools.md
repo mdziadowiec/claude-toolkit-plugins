@@ -20,19 +20,16 @@ user PATH.
 
 ## Steps
 
-Run the bundled installer script. This is Windows-only and requires PowerShell:
+Run the bundled installer script with PowerShell 7+ (`pwsh`). Windows-only:
 
 ```
 pwsh -NoProfile -ExecutionPolicy Bypass -File "${CLAUDE_PLUGIN_ROOT}/scripts/install-tools.ps1"
 ```
 
-If `pwsh` (PowerShell 7+) is not available, fall back to Windows PowerShell:
-
-```
-powershell -NoProfile -ExecutionPolicy Bypass -File "${CLAUDE_PLUGIN_ROOT}/scripts/install-tools.ps1"
-```
-
 To force a reinstall (e.g. to pick up the latest cc2md release), append `-Force`.
+
+> If `pwsh` is unavailable on a given machine, the same script also runs under
+> Windows PowerShell 5.1 — substitute `powershell` for `pwsh` above.
 
 ## After running
 
