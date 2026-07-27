@@ -22,21 +22,43 @@ Find a usable `cc2md` in this order and remember the resolved path as `$CC2MD`:
 
 ## Step 2 — Find the current session
 
-The "current session" is the most-recently-modified session for the **current
-project directory**. Do NOT use `cc2md --last 1` — that picks the newest session
-across *all* projects, which is usually a different project.
+The "current session" is the newest session log for the **current project
+directory**, inside the **active config directory**.
 
-Instead, list sessions filtered to this project and take the first (newest) entry:
+Do NOT locate it with `cc2md` — neither subcommand is safe here:
+
+- `cc2md --last 1` picks the newest session across *all* projects.
+- `cc2md list` (v0.1.0) always reads `$HOME/.claude/projects` and **ignores
+  `$CLAUDE_CONFIG_DIR`**. On a machine whose config directory is relocated
+  (`CLAUDE_CONFIG_DIR=~/.claude-private`, say), it lists sessions from the wrong
+  tree while still reporting a correct-looking `project` field — so the usual
+  sanity check passes and you silently export an unrelated conversation.
+
+Resolve the path yourself instead:
 
 ```bash
-"$CC2MD" list "$(basename "$PWD")" --json
+CFG="${CLAUDE_CONFIG_DIR:-$HOME/.claude}"
+PROJ="$(pwd -W 2>/dev/null || pwd)"              # Windows-style path under Git Bash
+SLUG="$(printf '%s' "$PROJ" | tr ':\\/' '-')"    # D:/Claude -> D--Claude
+ls -t "$CFG/projects/$SLUG"/*.jsonl 2>/dev/null | head -1
 ```
 
-Read the JSON yourself: the array is sorted newest-first, so element `[0]` is the
-current session. Take its `path` field (the absolute path to the `.jsonl`).
-Sanity-check that `[0].project` looks like an encoding of the current directory
-(e.g. cwd `D:\Claude\foo` → project `D--Claude-foo`); if it doesn't match, tell
-the user and stop rather than exporting the wrong session.
+The newest `.jsonl` in that directory is the current session.
+
+If that yields nothing — an unexpected path encoding — fall back to matching on
+the working directory each session records internally. The `cwd` value is stored
+JSON-escaped (cwd `D:\Claude` appears as `"cwd":"D:\\Claude"`):
+
+```bash
+WIN="${PROJ//\//\\}"                             # D:/Claude -> D:\Claude
+NEEDLE='"cwd":"'"${WIN//\\/\\\\}"'"'             # -> "cwd":"D:\\Claude"
+for f in $(ls -t "$CFG"/projects/*/*.jsonl 2>/dev/null); do
+  if grep -qF "$NEEDLE" "$f"; then echo "$f"; break; fi
+done
+```
+
+If neither locates a file, tell the user and stop rather than exporting an
+unrelated session.
 
 ## Step 3 — Export
 
