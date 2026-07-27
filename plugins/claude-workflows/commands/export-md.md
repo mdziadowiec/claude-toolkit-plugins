@@ -34,20 +34,30 @@ Do NOT locate it with `cc2md` — neither subcommand is safe here:
   tree while still reporting a correct-looking `project` field — so the usual
   sanity check passes and you silently export an unrelated conversation.
 
-Resolve the path yourself instead:
+Resolve the path yourself instead. Prefer the session id — it names the log file
+directly, so it is exact and does not care what the shell's working directory is:
 
 ```bash
 CFG="${CLAUDE_CONFIG_DIR:-$HOME/.claude}"
+ls "$CFG"/projects/*/"$CLAUDE_CODE_SESSION_ID".jsonl 2>/dev/null | head -1
+```
+
+Use that whenever `$CLAUDE_CODE_SESSION_ID` is set. Only if it is empty (older
+Claude Code, or a non-CLI entrypoint) fall back to deriving the project directory
+from the working directory:
+
+```bash
 PROJ="$(pwd -W 2>/dev/null || pwd)"              # Windows-style path under Git Bash
 SLUG="$(printf '%s' "$PROJ" | tr ':\\/' '-')"    # D:/Claude -> D--Claude
 ls -t "$CFG/projects/$SLUG"/*.jsonl 2>/dev/null | head -1
 ```
 
-The newest `.jsonl` in that directory is the current session.
-
-If that yields nothing — an unexpected path encoding — fall back to matching on
-the working directory each session records internally. The `cwd` value is stored
-JSON-escaped (cwd `D:\Claude` appears as `"cwd":"D:\\Claude"`):
+Note this second form is only as good as the shell's cwd. A `cd` earlier in the
+session leaves it pointing at a subdirectory, which yields a slug for a project
+directory that does not exist (`D--Claude-subdir`) and finds nothing. When that
+happens, match instead on the working directory each session records internally.
+The `cwd` value is stored JSON-escaped (cwd `D:\Claude` appears as
+`"cwd":"D:\\Claude"`):
 
 ```bash
 WIN="${PROJ//\//\\}"                             # D:/Claude -> D:\Claude
@@ -57,8 +67,8 @@ for f in $(ls -t "$CFG"/projects/*/*.jsonl 2>/dev/null); do
 done
 ```
 
-If neither locates a file, tell the user and stop rather than exporting an
-unrelated session.
+If none of the three locates a file, tell the user and stop rather than exporting
+an unrelated session.
 
 ## Step 3 — Export
 
