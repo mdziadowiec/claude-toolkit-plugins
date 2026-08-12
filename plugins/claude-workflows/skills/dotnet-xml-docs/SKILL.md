@@ -32,6 +32,15 @@ Applies to the text inside `<summary>`, `<remarks>`, `<param>`, `<returns>`, `<v
 - **Prefer plain, common words over rare or ornate ones** — API docs are read by non-native English speakers and machine-translated more often than most prose.
 - **Replace vague qualifiers with concrete facts** where practical: state the actual limit, complexity, or unit instead of "large," "fast," or "small."
 
+## Document the current state, not the change that produced it
+
+A doc comment is read by someone with no memory of the refactor, review, or conversation that produced it — often years later, always by someone who wasn't in the room. It should describe what the member does *now*, as if the code had always looked this way. This gets violated most often mid-refactor, when the diff is fresh in the writer's mind and the comment quietly absorbs that context.
+
+- **Don't narrate the change.** Avoid "Refactored to...", "Renamed from `Foo`...", "Simplified this to...", "Now uses X instead of Y", "Updated to fix...". Describe the resulting behavior, not the edit that produced it — the edit belongs in the commit message or PR description, where it can rot without taking the doc comment down with it.
+- **Don't compare to a previous version of the code or the comment.** Phrases like "no longer," "used to," "the old approach," or "as opposed to before" assume the reader has seen a version they never saw. If the comparison is genuinely useful context (e.g., a migration guide), it belongs in release notes or a changelog, not in the type's own doc comment.
+- **Don't reference the current session, conversation, task, or ticket.** "As discussed," "per this change," "addressing the review comment above," "for this fix" — none of that context ships with the code. To every future reader it's either meaningless or, worse, a dangling reference to a conversation they can't find.
+- **Treat every doc comment as freshly written**, not edited-in-place history. If a comment would read strangely to someone opening the file cold, with zero knowledge of the work session that touched it, rewrite it rather than patching around the tell-tale phrasing.
+
 ## Tag usage for all APIs
 
 - Use `<summary>` for the one-sentence description covered above.
@@ -106,3 +115,4 @@ Before treating a doc comment as done:
 2. Active voice, one idea per sentence, no filler, and the same term used everywhere for the same concept?
 3. Are parameters, return value, and exceptions documented with the required phrasing patterns above, using the correct language's keyword casing (`true`/`false` vs. `True`/`False`)?
 4. Does the `<example>` actually compile and demonstrate the point, not just decorate the doc?
+5. Does the comment describe only the current code — no trace of "refactored," "used to," "no longer," or any reference to the session, task, or conversation that produced the change?
