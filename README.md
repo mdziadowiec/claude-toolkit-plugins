@@ -69,6 +69,7 @@ See [`plugins/cli-tools/README.md`](plugins/cli-tools/README.md) for options and
 | karpathy | `/claude-workflows:karpathy` | Coding discipline — think before coding, surgical changes |
 | handoff | `/claude-workflows:handoff` | Structured session-handoff notes |
 | doc-coauthoring | `/claude-workflows:doc-coauthoring` | Structured documentation co-authoring |
+| technical-writing | `/claude-workflows:technical-writing` | ISO 24495 + Google Technical Writing rules for drafting/reviewing docs |
 
 ## Managing the plugins
 
@@ -92,7 +93,8 @@ claude plugin marketplace update claude-toolkit-plugins   # pull the latest afte
     │                                   #   rga, jc, jq-json-processor, yq, hyperfine
     └── claude-workflows/
         ├── .claude-plugin/plugin.json
-        └── skills/                     # crisp, karpathy, handoff, doc-coauthoring
+        └── skills/                     # crisp, karpathy, handoff, doc-coauthoring,
+                                        #   technical-writing
 ```
 
 ## Notes
