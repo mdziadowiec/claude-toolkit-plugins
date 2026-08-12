@@ -21,7 +21,7 @@ dependencies**. Part of the
 | handoff | `/claude-workflows:handoff` | Produces a structured handoff note so a fresh session can continue without re-deriving context |
 | doc-coauthoring | `/claude-workflows:doc-coauthoring` | Structured workflow for co-authoring docs, proposals, specs, and decision docs |
 | technical-writing | `/claude-workflows:technical-writing` | ISO 24495 plain-language + Google Technical Writing rules for drafting/reviewing developer docs |
-| cs-xml-docs | `/claude-workflows:cs-xml-docs` | C# XML doc comment conventions (`<summary>`, `<param>`, `<exception>`, ...) merged with technical-writing principles for clear, consistent prose |
+| dotnet-xml-docs | `/claude-workflows:dotnet-xml-docs` | C#/VB.NET XML doc comment conventions (`<summary>`, `<param>`, `<exception>`, ...) merged with technical-writing principles for clear, consistent prose |
 
 Skills are model-invoked: Claude activates them automatically when your request matches (e.g.
 "be brief" → crisp, "keep it surgical" → karpathy), or you can trigger one explicitly with its
