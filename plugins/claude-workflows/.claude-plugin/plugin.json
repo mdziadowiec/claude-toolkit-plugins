@@ -1,12 +1,12 @@
 {
   "name": "claude-workflows",
   "displayName": "Claude Workflow Skills",
-  "version": "1.4.0",
-  "description": "Workflow and discipline skills for Claude Code: crisp (concise output), karpathy (coding discipline), handoff (session handoff notes), doc-coauthoring (structured documentation), technical-writing (ISO 24495 + Google Technical Writing rules for drafting/reviewing docs), and dotnet-xml-docs (C#/VB.NET XML doc comment conventions merged with technical-writing principles). Includes the /export-md command to export the current session to markdown via cc2md (run /install-tools once to provision cc2md).",
+  "version": "1.5.0",
+  "description": "Workflow and discipline skills for Claude Code: crisp (concise output), karpathy (coding discipline), handoff (session handoff notes), doc-coauthoring (structured documentation), technical-writing (ISO 24495 + Google Technical Writing rules for drafting/reviewing docs), dotnet-xml-docs (C#/VB.NET XML doc comment conventions merged with technical-writing principles), and code-comments (inline code comment rules — English-only, no refactor/session narration, when to comment at all). Includes the /export-md command to export the current session to markdown via cc2md (run /install-tools once to provision cc2md).",
   "author": {
     "name": "Maciej Dziadowiec"
   },
   "repository": "https://github.com/mdziadowiec/claude-toolkit-plugins",
   "license": "MIT",
-  "keywords": ["workflow", "crisp", "karpathy", "handoff", "documentation", "discipline", "export-md", "cc2md", "technical-writing", "dotnet-xml-docs", "csharp", "vbnet", "dotnet"]
+  "keywords": ["workflow", "crisp", "karpathy", "handoff", "documentation", "discipline", "export-md", "cc2md", "technical-writing", "dotnet-xml-docs", "code-comments", "csharp", "vbnet", "dotnet"]
 }
