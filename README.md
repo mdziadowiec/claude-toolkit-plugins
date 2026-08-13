@@ -70,6 +70,8 @@ See [`plugins/cli-tools/README.md`](plugins/cli-tools/README.md) for options and
 | handoff | `/claude-workflows:handoff` | Structured session-handoff notes |
 | doc-coauthoring | `/claude-workflows:doc-coauthoring` | Structured documentation co-authoring |
 | technical-writing | `/claude-workflows:technical-writing` | ISO 24495 + Google Technical Writing rules for drafting/reviewing docs |
+| code-comments | `/claude-workflows:code-comments` | Rules for writing / reviewing inline code comments |
+| dotnet-xml-docs | `/claude-workflows:dotnet-xml-docs` | XML doc comments for C# / VB.NET public APIs |
 
 ## Managing the plugins
 
@@ -94,7 +96,7 @@ claude plugin marketplace update claude-toolkit-plugins   # pull the latest afte
     └── claude-workflows/
         ├── .claude-plugin/plugin.json
         └── skills/                     # crisp, karpathy, handoff, doc-coauthoring,
-                                        #   technical-writing
+                                        #   technical-writing, code-comments, dotnet-xml-docs
 ```
 
 ## Notes
