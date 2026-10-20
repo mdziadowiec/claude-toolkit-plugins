@@ -14,6 +14,9 @@ description: >
 When invoked, write a Markdown handoff note and save it to `docs/handoffs/<kebab-topic>.md`
 (create the `handoffs/` subdirectory if absent). If the user specifies a different location, use that.
 
+If the user passes arguments, treat them as what the next session will focus on and tailor the
+note to that goal: lead with the context it needs and trim what it doesn't.
+
 ## Note structure
 
 ```markdown
@@ -47,11 +50,16 @@ recommendation and the key tradeoff.
 | File | Symbol / section | What it does |
 |------|-----------------|--------------|
 | path/to/file.cs | ClassName.MethodName | ... |
+
+## Suggested skills
+
+Skills the next session should invoke, each with one line on when (e.g. `/investigate` to
+continue the root-cause trace, `/git-commit` once the fix verifies).
 ```
 
 ## Guidelines
 
 - Write for someone (or a future session) that has not seen this conversation.
 - Be specific about line numbers or method names when they are stable.
-- Do not repeat information already in comments or CLAUDE.md — link to them instead.
-- 
+- Do not repeat information already captured elsewhere (code comments, CLAUDE.md, plans, ADRs,
+  Jira issues, commits, diffs) — reference them by path or URL instead.
