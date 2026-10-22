@@ -13,7 +13,7 @@
     {
       "name": "claude-workflows",
       "source": "./plugins/claude-workflows",
-      "description": "Workflow and discipline skills: crisp, karpathy, handoff, doc-coauthoring, technical-writing. Plus the /export-md command to export the current session to markdown via cc2md."
+      "description": "Workflow and discipline skills: crisp, karpathy, handoff, doc-coauthoring, technical-writing, dotnet-xml-docs, code-comments, error-messages. Plus the /export-md command to export the current session to markdown via cc2md."
     }
   ]
 }

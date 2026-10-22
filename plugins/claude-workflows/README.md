@@ -23,6 +23,7 @@ dependencies**. Part of the
 | technical-writing | `/claude-workflows:technical-writing` | ISO 24495 plain-language + Google Technical Writing rules for drafting/reviewing developer docs |
 | dotnet-xml-docs | `/claude-workflows:dotnet-xml-docs` | C#/VB.NET XML doc comment conventions (`<summary>`, `<param>`, `<exception>`, ...) merged with technical-writing principles for clear, consistent prose |
 | code-comments | `/claude-workflows:code-comments` | Inline code comment rules (any language): when to comment at all, always English, no refactor/session narration, TODO conventions, staleness hygiene — applies automatically |
+| error-messages | `/claude-workflows:error-messages` | Google's Writing Helpful Error Messages rules: cause, offending value, limit, fix, example, concise wording, audience, consistent terms, tone, error codes — applies automatically when writing error text |
 
 Skills are model-invoked: Claude activates them automatically when your request matches (e.g.
 "be brief" → crisp, "keep it surgical" → karpathy), or you can trigger one explicitly with its

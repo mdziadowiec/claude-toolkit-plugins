@@ -72,6 +72,7 @@ See [`plugins/cli-tools/README.md`](plugins/cli-tools/README.md) for options and
 | technical-writing | `/claude-workflows:technical-writing` | ISO 24495 + Google Technical Writing rules for drafting/reviewing docs |
 | code-comments | `/claude-workflows:code-comments` | Rules for writing / reviewing inline code comments |
 | dotnet-xml-docs | `/claude-workflows:dotnet-xml-docs` | XML doc comments for C# / VB.NET public APIs |
+| error-messages | `/claude-workflows:error-messages` | Rules for writing / reviewing error message text |
 
 ## Managing the plugins
 
@@ -96,7 +97,8 @@ claude plugin marketplace update claude-toolkit-plugins   # pull the latest afte
     └── claude-workflows/
         ├── .claude-plugin/plugin.json
         └── skills/                     # crisp, karpathy, handoff, doc-coauthoring,
-                                        #   technical-writing, code-comments, dotnet-xml-docs
+                                        #   technical-writing, code-comments, dotnet-xml-docs,
+                                        #   error-messages
 ```
 
 ## Notes
