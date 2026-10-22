@@ -1,6 +1,6 @@
 ---
 name: doc-coauthoring
-description: Guide users through a structured workflow for co-authoring documentation. Use when user wants to write documentation, proposals, technical specs, decision docs, or similar structured content. This workflow helps users efficiently transfer context, refine content through iteration, and verify the doc works for readers. Trigger when user mentions writing docs, creating proposals, drafting specs, or similar documentation tasks.
+description: Guide users through a structured, interactive workflow for co-authoring a substantial new document from scratch — PRDs, RFCs, design docs, decision docs, proposals, technical specs — via context gathering, section-by-section drafting, and reader testing with a fresh agent. Use when the user wants to start writing such a document together, e.g. "help me write a design doc for X", "let's draft an RFC", "write up a proposal for Y". For editing, reviewing, or proofreading existing text, or for drafting short docs (a README section, runbook, tutorial, release notes), use the technical-writing skill instead; this workflow applies the technical-writing rules while drafting.
 ---
 
 # Doc Co-Authoring Workflow
@@ -197,6 +197,8 @@ Based on what they've selected, ask if there's anything important missing for th
 
 Use `str_replace` to replace the placeholder text for this section with the actual drafted content.
 
+Write the content by the `technical-writing` skill's rules (load it if it isn't loaded yet): active voice, defined terms used consistently, one idea per sentence, introduced and parallel lists, task-based headings. The user should spend their feedback on substance, not on fixing prose.
+
 Announce the [SECTION NAME] section will be drafted now based on what they've selected.
 
 **If using artifacts:**
@@ -217,6 +219,7 @@ Provide a note: Instead of editing the doc directly, ask them to indicate what t
 As user provides feedback:
 
 - Use `str_replace` to make edits (never reprint the whole doc)
+- Keep each edit within the `technical-writing` rules, unless the user's stated preference overrides one
 - **If using artifacts:** Provide link to artifact after each edit
 - **If using files:** Just confirm edits are complete
 - If user edits doc directly and asks to read it: mentally note the changes they made and keep them in mind for future sections (this shows their preferences)
@@ -352,7 +355,8 @@ Announce the doc has passed Reader Claude testing. Before completion:
 
 1. Recommend they do a final read-through themselves - they own this document and are responsible for its quality
 2. Suggest double-checking any facts, links, or technical details
-3. Ask them to verify it achieves the impact they wanted
+3. Run the `technical-writing` skill's quick review pass (relevant, findable, understandable, usable) and report anything it catches
+4. Ask them to verify it achieves the impact they wanted
 
 Ask if they want one more review, or if the work is done.
 
