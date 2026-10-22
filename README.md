@@ -6,7 +6,7 @@ skills I use day to day, split into two independent plugins so you can take eith
 | Plugin | What's in it | External deps |
 |---|---|---|
 | **cli-tools** | Search / JSON / benchmarking skills, plus a one-shot command that installs the underlying binaries | Yes (Windows installer included) |
-| **claude-workflows** | Output-style and coding-discipline skills | None — pure prompt skills |
+| **workflows** | Output-style and coding-discipline skills | None — pure prompt skills |
 
 ## Install
 
@@ -15,7 +15,7 @@ Add the marketplace once, then install whichever plugin(s) you want:
 ```
 /plugin marketplace add mdziadowiec/claude-toolkit-plugins
 /plugin install cli-tools@claude-toolkit-plugins
-/plugin install claude-workflows@claude-toolkit-plugins
+/plugin install workflows@claude-toolkit-plugins
 ```
 
 Run `/reload-plugins` afterward to activate them in the current session.
@@ -61,18 +61,18 @@ See [`plugins/cli-tools/README.md`](plugins/cli-tools/README.md) for options and
 | bat | `/cli-tools:bat` | View files with syntax highlighting + line numbers |
 | hyperfine | `/cli-tools:hyperfine` | Statistical CLI benchmarking |
 
-### claude-workflows
+### workflows
 
 | Skill | Invoke as | Purpose |
 |---|---|---|
-| crisp | `/claude-workflows:crisp` | Shorter, more direct responses |
-| karpathy | `/claude-workflows:karpathy` | Coding discipline — think before coding, surgical changes |
-| handoff | `/claude-workflows:handoff` | Structured session-handoff notes |
-| doc-coauthoring | `/claude-workflows:doc-coauthoring` | Structured documentation co-authoring |
-| technical-writing | `/claude-workflows:technical-writing` | ISO 24495 + Google Technical Writing rules for drafting/reviewing docs |
-| code-comments | `/claude-workflows:code-comments` | Rules for writing / reviewing inline code comments |
-| dotnet-xml-docs | `/claude-workflows:dotnet-xml-docs` | XML doc comments for C# / VB.NET public APIs |
-| error-messages | `/claude-workflows:error-messages` | Rules for writing / reviewing error message text |
+| crisp | `/workflows:crisp` | Shorter, more direct responses |
+| karpathy | `/workflows:karpathy` | Coding discipline — think before coding, surgical changes |
+| handoff | `/workflows:handoff` | Structured session-handoff notes |
+| doc-coauthoring | `/workflows:doc-coauthoring` | Structured documentation co-authoring |
+| technical-writing | `/workflows:technical-writing` | ISO 24495 + Google Technical Writing rules for drafting/reviewing docs |
+| code-comments | `/workflows:code-comments` | Rules for writing / reviewing inline code comments |
+| dotnet-xml-docs | `/workflows:dotnet-xml-docs` | XML doc comments for C# / VB.NET public APIs |
+| error-messages | `/workflows:error-messages` | Rules for writing / reviewing error message text |
 
 ## Managing the plugins
 
@@ -94,7 +94,7 @@ claude plugin marketplace update claude-toolkit-plugins   # pull the latest afte
     │   ├── scripts/install-tools.ps1   # idempotent Windows installer
     │   └── skills/                     # cli-toolkit, fd-file-search, rg-fzf-dotnet,
     │                                   #   rga, jc, jq-json-processor, yq, hyperfine
-    └── claude-workflows/
+    └── workflows/
         ├── .claude-plugin/plugin.json
         └── skills/                     # crisp, karpathy, handoff, doc-coauthoring,
                                         #   technical-writing, code-comments, dotnet-xml-docs,

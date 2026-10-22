@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    Installs the external tools required by the claude-workflows plugin (Windows).
+    Installs the external tools required by the workflows plugin (Windows).
 
 .DESCRIPTION
     Currently provisions:
@@ -52,7 +52,7 @@ function Add-ToUserPath {
     return $true
 }
 
-Write-Host "claude-workflows tool installer (Windows)" -ForegroundColor White
+Write-Host "workflows tool installer (Windows)" -ForegroundColor White
 Write-Host "-----------------------------------------"
 
 $binDir = Join-Path $env:USERPROFILE '.claude\bin'

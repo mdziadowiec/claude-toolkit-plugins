@@ -1,8 +1,8 @@
 ---
-description: Install the external tools the claude-workflows commands depend on (cc2md for /export-md) on Windows. Run once after installing the plugin.
+description: Install the external tools the workflows commands depend on (cc2md for /export-md) on Windows. Run once after installing the plugin.
 ---
 
-# Install claude-workflows dependencies (Windows)
+# Install workflows dependencies (Windows)
 
 The `/export-md` command shells out to [`cc2md`](https://github.com/magarcia/cc2md).
 This command provisions it from the prebuilt GitHub release binary. It is

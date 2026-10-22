@@ -1,7 +1,7 @@
 {
-  "name": "claude-workflows",
+  "name": "workflows",
   "displayName": "Claude Workflow Skills",
-  "version": "1.6.0",
+  "version": "2.0.0",
   "description": "Workflow and discipline skills for Claude Code: crisp (concise output), karpathy (coding discipline), handoff (session handoff notes), doc-coauthoring (structured documentation), technical-writing (ISO 24495 + Google Technical Writing rules for drafting/reviewing docs), dotnet-xml-docs (C#/VB.NET XML doc comment conventions merged with technical-writing principles), code-comments (inline code comment rules — English-only, no refactor/session narration, when to comment at all), and error-messages (Google's Writing Helpful Error Messages rules for exception, validation, CLI, and API error text). Includes the /export-md command to export the current session to markdown via cc2md (run /install-tools once to provision cc2md).",
   "author": {
     "name": "Maciej Dziadowiec"
