@@ -7,7 +7,7 @@ allowed-tools: Bash, PowerShell
 
 # hyperfine — Command-Line Benchmarking
 
-hyperfine 1.20.0 is installed. It runs multiple timed iterations, computes mean/stddev/min/max, and produces ranked comparisons across commands.
+hyperfine 2.0.0 is installed. It runs multiple timed iterations, computes mean/stddev/min/max, and compares commands against the first one.
 
 ## Non-negotiable rules
 
@@ -15,8 +15,19 @@ hyperfine 1.20.0 is installed. It runs multiple timed iterations, computes mean/
 2. Use `-n` to give commands readable names whenever the raw command string is long or opaque.
 3. Prefer `--export-json` when the user wants to post-process results; prefer `--export-markdown` for documents and PRs.
 4. Never use `--show-output` in benchmarks that matter — it inflates timings.
-5. Use `--shell=none` when benchmarking commands that do not need a shell to eliminate shell-startup overhead noise.
+5. Use `-N` (alias of `--shell=none`) for plain executables. It's the 2.0 default anyway, so commands with pipes, `&&` or shell built-ins need `-S` (platform shell) or `--shell=<shell>`.
 6. Use `--prepare` for per-run setup (e.g., drop caches); use `--setup` for one-time setup before all runs.
+7. Without a shell, hyperfine splits the command line shell-style and treats `\` as an escape character, so `D:\repo` becomes `D:repo`. Write Windows paths with forward slashes (`D:/repo`).
+
+### Changed in 2.0 (don't use the 1.x flags)
+
+| 1.x | 2.0 |
+|---|---|
+| `--sort mean-time` | removed. Results print in command order, each compared with the first command. Rank with `jq` (see below). |
+| `--reference <cmd>` | removed. The **first** command is the reference, so list the baseline first. |
+| `--time-unit millisecond` | `--metrics time_wall_clock:ms` |
+| shell by default | **no** shell by default; `-S` turns the platform shell back on |
+| JSON `.results[].mean`, `.times` | `.results[].summary.time_wall_clock.mean`, `.results[].measurements[].time_wall_clock.value` (seconds) |
 
 ---
 
@@ -125,14 +136,14 @@ hyperfine --export-json r.json --export-markdown r.md 'cmd-a' 'cmd-b'
 
 ### Parse JSON results with jq
 ```bash
-# Mean times for each command
-jq '.results[] | {command: .command, mean: .mean}' results.json
+# Mean wall-clock time (seconds) for each command
+jq '.results[] | {command, mean: .summary.time_wall_clock.mean}' results.json
 
-# Ranked by mean time
-jq '[.results[] | {command: .command, mean: .mean}] | sort_by(.mean)' results.json
+# Ranked by mean time (replaces the removed --sort)
+jq '[.results[] | {command, mean: .summary.time_wall_clock.mean}] | sort_by(.mean)' results.json
 
 # Per-run timings for a command
-jq '.results[0].times' results.json
+jq '[.results[0].measurements[].time_wall_clock.value]' results.json
 ```
 
 ---
@@ -141,31 +152,29 @@ jq '.results[0].times' results.json
 
 ### Set a reference command
 ```bash
-# Compare others relative to 'baseline', not the fastest
-hyperfine --reference 'baseline-cmd' 'new-cmd-a' 'new-cmd-b'
+# The first command is the reference; the others are shown relative to it
+hyperfine 'baseline-cmd' 'new-cmd-a' 'new-cmd-b'
 ```
 
-### Control sort order of the summary table
-```bash
-hyperfine --sort mean-time 'cmd-a' 'cmd-b' 'cmd-c'
-```
+### Ranking
+2.0 has no `--sort`. Results print in command order; to rank them, export JSON and sort with `jq` (see *Parse JSON results with jq*).
 
 ---
 
 ## Reduce noise
 
 ```bash
-# Eliminate shell-startup overhead
-hyperfine --shell=none '/usr/bin/ls /tmp'
+# No shell (the 2.0 default; -N makes it explicit)
+hyperfine -N '/usr/bin/ls /tmp'
 
 # Increase iterations for fast commands
-hyperfine --min-runs 50 'echo hello'
+hyperfine -N --min-runs 50 'fast-cmd'
 
 # Cap iterations for slow commands
 hyperfine --max-runs 5 'long-running-task'
 
 # Control time unit in output
-hyperfine --time-unit millisecond 'fast-cmd'
+hyperfine --metrics time_wall_clock:ms 'fast-cmd'
 ```
 
 ---
@@ -216,12 +225,13 @@ cat bench.md
 
 ### Task: Benchmark on Windows (no shell overhead)
 ```bash
-hyperfine --shell=none 'C:\path\to\app.exe --args'
+# Forward slashes: without a shell, '\' is an escape character
+hyperfine -N 'C:/path/to/app.exe --args'
 ```
 
 ### Task: Fast command needs many runs
 ```bash
-hyperfine --min-runs 100 --time-unit microsecond 'fast-cmd'
+hyperfine -N --min-runs 100 --metrics time_wall_clock:us 'fast-cmd'
 ```
 
 ---
