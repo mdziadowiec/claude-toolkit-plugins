@@ -28,7 +28,6 @@ Then provision the underlying tools (see below).
 | yq | `/cli-tools:yq` | Query / edit / convert YAML, JSON, XML, TOML, CSV |
 | gron | `/cli-tools:gron` | Flatten JSON into greppable lines (and back) |
 | sd | `/cli-tools:sd` | Intuitive find-and-replace (sed alternative) |
-| bat | `/cli-tools:bat` | View files with syntax highlighting + line numbers |
 | hyperfine | `/cli-tools:hyperfine` | Statistical CLI benchmarking |
 
 Skills are model-invoked: Claude reaches for them automatically when a task matches, or you can
@@ -45,7 +44,7 @@ already on `PATH` are detected and skipped:
 
 | Tools | Source |
 |---|---|
-| `rg`, `fd`, `fzf`, `jq`, `yq`, `hyperfine`, `bat`, `gron`, `sd`, `ast-grep` | winget |
+| `rg`, `fd`, `fzf`, `jq`, `yq`, `hyperfine`, `gron`, `sd`, `ast-grep` | winget |
 | `jc` | pip (`--user`) |
 | `rga`, `poppler` *(optional)* | scoop (auto-installs scoop if missing) |
 

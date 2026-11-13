@@ -4,7 +4,7 @@
 
 .DESCRIPTION
     Idempotent: each tool is only installed if its command is not already on PATH.
-    winget tools: rg, fd, fzf, jq, yq, hyperfine, bat, gron, sd, ast-grep
+    winget tools: rg, fd, fzf, jq, yq, hyperfine, gron, sd, ast-grep
     pip tool:     jc (auto-installs a real Python via winget if only the Windows
                   Store stub is present, then puts the --user Scripts dir on PATH)
     scoop tools:  rga (ripgrep-all), poppler (optional, for rga PDF extraction)
@@ -147,7 +147,6 @@ $wingetTools = @(
     @{ Tool = 'jq';        Id = 'jqlang.jq' },
     @{ Tool = 'yq';        Id = 'MikeFarah.yq' },
     @{ Tool = 'hyperfine'; Id = 'sharkdp.hyperfine' },
-    @{ Tool = 'bat';       Id = 'sharkdp.bat' },
     @{ Tool = 'gron';      Id = 'TomHudson.gron' },
     @{ Tool = 'sd';        Id = 'chmln.sd' },
     @{ Tool = 'ast-grep';  Id = 'ast-grep.ast-grep' }

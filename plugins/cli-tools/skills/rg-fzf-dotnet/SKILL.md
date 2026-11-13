@@ -33,6 +33,7 @@ Prefer small, structured, parseable outputs:
    - use `--json` only when structured machine parsing is needed
 7. Use `fzf` as a deterministic secondary filter/ranker with `--filter`, not as a user-facing UI, unless explicitly requested.
 8. Use `-e "<pattern>"` so patterns beginning with `-` are treated as search patterns, not options.
+9. If `rg` fails with `grep: unknown option`, a command rewriter such as rtk has turned `rg` into `grep`, which does not know `-g` or `-t`. Add `"rg"` to `exclude_commands` under `[hooks]` in the rtk `config.toml`, or run the command as `rtk proxy rg ...`.
 
 ---
 

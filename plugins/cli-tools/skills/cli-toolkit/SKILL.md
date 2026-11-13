@@ -2,7 +2,7 @@
 name: cli-toolkit
 description: >
   Multi-tool CLI pipelines for token-efficient agentic work — combining fd, rg, fzf, jc, jq,
-  yq, gron, bat, sd, and ast-grep into cross-tool workflows. Use this skill when combining two
+  yq, gron, sd, and ast-grep into cross-tool workflows. Use this skill when combining two
   or more CLI tools (fd+rg, rg+jc+jq, rg+fzf, yq+jq, gron+rg, rg+sd, ast-grep+jq), when output
   is too large and needs bounding, when deciding which pipeline to use for a task, when quoting
   rules differ between Git Bash / pwsh / cmd.exe, or when preparing an agent handoff paste.
@@ -11,9 +11,9 @@ allowed-tools: Bash, PowerShell
 
 # cli-toolkit — Multi-Tool Pipeline Reference
 
-For deep flag reference and examples for any individual tool, load its own skill: `/fd-file-search`, `/rg-fzf-dotnet`, `/jc`, `/jq-json-processor`, `/yq`, `/gron`, `/bat`, `/sd`, `/ast-grep`.
+For deep flag reference and examples for any individual tool, load its own skill: `/fd-file-search`, `/rg-fzf-dotnet`, `/jc`, `/jq-json-processor`, `/yq`, `/gron`, `/sd`, `/ast-grep`.
 
-**Tool roles at a glance:** fd (find files) · rg (search text) · ast-grep (search code *structure*) · fzf (fuzzy-rank) · bat (view, highlighted) · jc (CLI output → JSON) · jq (filter JSON) · yq (YAML/XML/TOML ↔ JSON) · gron (flatten JSON to greppable lines) · sd (find & replace).
+**Tool roles at a glance:** fd (find files) · rg (search text) · ast-grep (search code *structure*) · fzf (fuzzy-rank) · jc (CLI output → JSON) · jq (filter JSON) · yq (YAML/XML/TOML ↔ JSON) · gron (flatten JSON to greppable lines) · sd (find & replace).
 
 ---
 
@@ -48,7 +48,6 @@ Choose a pipeline based on what you have and what you want:
 | Explore unfamiliar JSON / find a key's path | `gron <file> \| rg <key>` (add `\| gron -u` to rebuild) | `/gron` + `/rg-fzf-dotnet` |
 | Search code by *structure*, not text | `ast-grep run -p '<pattern>' -l <lang> .` | `/ast-grep` |
 | Search-and-replace across matched files | `rg -l <pat> -g <glob> \| xargs sd '<find>' '<replace>'` | `/rg-fzf-dotnet` + `/sd` |
-| View a bounded, highlighted slice for citation | `bat --paging=never -n -r <a>:<b> <file>` | `/bat` |
 
 ---
 
