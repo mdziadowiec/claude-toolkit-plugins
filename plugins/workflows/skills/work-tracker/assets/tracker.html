@@ -1,0 +1,249 @@
+<title>__TRACKER_TITLE__</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+  /* Layout: one reading column; summary (now, waiting on you) before detail (phases, log). */
+  :root {
+    --bg: #ffffff; --fg: #1f2328; --muted: #5b6672; --line: #d6dde5; --soft: #f4f7fa; --accent: #0b62c4;
+    --done-bg: #dcf5e3; --done-fg: #1a6334; --active-bg: #dcefff; --active-fg: #0a4f9e;
+    --you-bg: #fff0c2; --you-fg: #7a4a00; --idle-bg: #eef1f4; --idle-fg: #56616d;
+    --warn-fg: #8a4b00;
+    --font-body: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --font-mono: ui-monospace, "Cascadia Mono", Consolas, monospace;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #12161b; --fg: #e3e8ee; --muted: #93a0ad; --line: #2c343d; --soft: #1a2027; --accent: #6cb0ff;
+      --done-bg: #173823; --done-fg: #8fdca8; --active-bg: #142c47; --active-fg: #9cc9ff;
+      --you-bg: #3d2f0a; --you-fg: #f3cf6e; --idle-bg: #232a32; --idle-fg: #a3aebb;
+      --warn-fg: #f0b35c;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #12161b; --fg: #e3e8ee; --muted: #93a0ad; --line: #2c343d; --soft: #1a2027; --accent: #6cb0ff;
+    --done-bg: #173823; --done-fg: #8fdca8; --active-bg: #142c47; --active-fg: #9cc9ff;
+    --you-bg: #3d2f0a; --you-fg: #f3cf6e; --idle-bg: #232a32; --idle-fg: #a3aebb;
+    --warn-fg: #f0b35c;
+    color-scheme: dark;
+  }
+  body { background: var(--bg); color: var(--fg); font: 14px/1.5 var(--font-body);
+         padding-block: 20px 40px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  main { max-width: 880px; margin: 0 auto; display: grid; gap: 22px; }
+  h1 { font-size: 20px; margin: 0; text-wrap: balance; }
+  h2 { font-size: 15px; margin: 0 0 6px; text-wrap: balance; }
+  .sub { color: var(--muted); margin: 2px 0 0; }
+  .notice { color: var(--warn-fg); }
+  .now { background: var(--soft); border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; display: grid; gap: 4px; }
+  .now b { display: inline-block; min-width: 44px; }
+  .phase-note { color: var(--muted); margin: 0 0 6px; font-size: 13px; }
+  details { border-top: 1px solid var(--line); }
+  .list > details:last-child { border-bottom: 1px solid var(--line); }
+  summary { display: flex; gap: 10px; align-items: baseline; padding: 7px 2px; cursor: pointer; list-style: none; }
+  summary::-webkit-details-marker { display: none; }
+  summary:focus-visible, button:focus-visible, textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .code { font: 600 13px var(--font-mono); min-width: 34px; }
+  .title { flex: 1; min-width: 0; }
+  .deps { color: var(--muted); font-size: 12px; white-space: nowrap; }
+  .pill { font-size: 12px; padding: 0 8px; border: 1px solid transparent; border-radius: 10px; white-space: nowrap; min-width: 92px; text-align: center; }
+  .s-done, .s-answered { background: var(--done-bg); color: var(--done-fg); }
+  .s-active { background: var(--active-bg); color: var(--active-fg); }
+  .s-you { background: var(--you-bg); color: var(--you-fg); font-weight: 600; }
+  .s-blocked, .s-parked, .s-dropped { background: var(--idle-bg); color: var(--idle-fg); }
+  .s-todo { background: var(--bg); color: var(--idle-fg); border: 1px solid var(--line); }
+  .s-dropped { text-decoration: line-through; }
+  .body { padding: 2px 2px 12px 46px; display: grid; gap: 8px; min-width: 0; }
+  .body p { margin: 0; white-space: pre-line; overflow-wrap: anywhere; }
+  .label { font-weight: 600; }
+  .done-row .title { color: var(--muted); }
+  .answer-form { display: grid; gap: 6px; }
+  .answer-form textarea { width: 100%; box-sizing: border-box; min-height: 64px; resize: vertical; font: inherit;
+                          color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; }
+  .answer-form .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .answer-form button { font: inherit; padding: 4px 12px; border-radius: 6px; border: 1px solid var(--accent);
+                        background: var(--accent); color: var(--bg); cursor: pointer; }
+  .answer-form button:disabled { opacity: .55; cursor: default; }
+  .pending { color: var(--you-fg); }
+  .log { margin: 0; padding-left: 0; list-style: none; display: grid; gap: 4px; }
+  .log li { overflow-wrap: anywhere; }
+  .log span { color: var(--muted); font-variant-numeric: tabular-nums; margin-right: 8px; }
+  .legend { color: var(--muted); font-size: 12px; }
+  @media (max-width: 560px) { summary { flex-wrap: wrap; } .body { padding-left: 2px; } .deps { white-space: normal; } }
+</style>
+
+<main>
+  <header>
+    <h1 id="heading">__TRACKER_TITLE__</h1>
+    <p class="sub" id="updated">Loading the tracker…</p>
+  </header>
+  <section class="now" id="now" hidden></section>
+  <section>
+    <h2>Waiting on you</h2>
+    <div class="list" id="waiting"><p class="sub">Nothing right now.</p></div>
+  </section>
+  <div id="phases" style="display:grid;gap:22px"></div>
+  <section id="log-section" hidden>
+    <h2>Log</h2>
+    <ul class="log" id="log"></ul>
+  </section>
+  <p class="legend">Codes: T = Claude's task, Q = your decision, P = parked. Codes never change. Answer a Q item here, then tell Claude "check the tracker".</p>
+</main>
+
+<script type="application/json" id="snapshot">null</script>
+<script>
+(() => {
+  const LABEL = { done: "Done", active: "In progress", you: "Waiting on you", blocked: "Blocked", todo: "To do",
+                  parked: "Parked", answered: "Answered", dropped: "Dropped" };
+  const FINISHED = new Set(["done", "answered", "dropped"]);
+  const state = { meta: null, phases: [], items: [], log: [], answers: {}, live: false, frozen: false, canWrite: false, notice: "" };
+  const openRows = new Set();
+  const drafts = new Map();
+  const saving = new Set();
+  let db = null;
+
+  const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+  const byOrder = (a, b) => (a.order ?? 1e9) - (b.order ?? 1e9) || String(a.code).localeCompare(String(b.code), undefined, { numeric: true });
+
+  function answerForm(it) {
+    const pending = state.answers[it.code];
+    const wrap = el("div", "answer-form");
+    if (pending) {
+      const p = el("p", "pending");
+      p.append(el("span", "label", "Your answer (Claude hasn't picked it up yet): "), document.createTextNode(pending.text || ""));
+      wrap.append(p);
+    }
+    if (!state.live || !state.canWrite) return wrap;
+    const id = "answer-" + it.code;
+    const ta = el("textarea"); ta.id = id; ta.setAttribute("aria-label", "Your answer to " + it.code);
+    ta.value = drafts.has(it.code) ? drafts.get(it.code) : (pending?.text || "");
+    ta.addEventListener("input", () => drafts.set(it.code, ta.value));
+    const btn = el("button", "", pending ? "Update answer" : "Save answer"); btn.type = "button"; btn.id = "save-" + it.code;
+    btn.disabled = saving.has(it.code);
+    const status = el("span", "sub");
+    btn.addEventListener("click", async () => {
+      const text = ta.value.trim();
+      if (!text) { status.textContent = "Write an answer first."; return; }
+      saving.add(it.code); btn.disabled = true; status.textContent = "Saving…";
+      try {
+        await db.doc("answers/" + it.code).set({ text, at: new Date().toISOString() });
+        drafts.delete(it.code);
+        status.textContent = "Saved. Tell Claude “check the tracker”.";
+      } catch (e) {
+        status.textContent = e && e.code === "quota_exceeded" ? "The tracker's storage is full; answer in chat instead."
+                           : "Couldn't save (" + (e && e.code || "error") + "). Try again, or answer in chat.";
+      } finally { saving.delete(it.code); btn.disabled = false; }
+    });
+    const row = el("div", "row"); row.append(btn, status);
+    wrap.append(ta, row);
+    return wrap;
+  }
+
+  // The answer box goes only on the "Waiting on you" copy of an item, so its control ids stay unique.
+  function row(it, withAnswerBox = false) {
+    const d = el("details", FINISHED.has(it.status) ? "done-row" : "");
+    d.dataset.code = it.code;
+    if (openRows.has(it.code)) d.open = true;
+    d.addEventListener("toggle", () => { d.open ? openRows.add(it.code) : openRows.delete(it.code); });
+    const s = el("summary");
+    s.append(el("span", "code", it.code), el("span", "pill s-" + it.status, LABEL[it.status] || it.status), el("span", "title", it.title));
+    if (it.waitsOn && (it.status === "blocked" || it.status === "you")) s.append(el("span", "deps", "after " + it.waitsOn));
+    d.append(s);
+    const b = el("div", "body");
+    if (it.details) b.append(el("p", "", it.details));
+    if (it.recommendation) { const p = el("p"); p.append(el("span", "label", "My recommendation: "), document.createTextNode(it.recommendation)); b.append(p); }
+    if (it.answer) { const p = el("p"); p.append(el("span", "label", "Your answer: "), document.createTextNode(it.answer)); b.append(p); }
+    if (withAnswerBox && String(it.code).startsWith("Q")) b.append(answerForm(it));
+    d.append(b);
+    return d;
+  }
+
+  function render() {
+    const focused = document.activeElement && document.activeElement.id;
+    const sel = focused && document.activeElement.selectionStart != null ? [document.activeElement.selectionStart, document.activeElement.selectionEnd] : null;
+    const m = state.meta || {};
+    if (m.title) { document.getElementById("heading").textContent = m.title; }
+    const parts = [];
+    if (state.frozen) parts.push("Closed" + (m.closed ? " " + m.closed : "") + " · read-only");
+    else if (m.updated) parts.push("Updated " + m.updated);
+    const upd = document.getElementById("updated");
+    upd.textContent = parts.join(" · ") || (state.items.length ? "" : "No items yet. Claude fills this tracker as the work starts.");
+    if (state.notice) { upd.append(document.createTextNode(parts.length ? " · " : "")); upd.append(el("span", "notice", state.notice)); }
+
+    const now = document.getElementById("now");
+    now.replaceChildren();
+    for (const [k, v] of [["Now", m.now], ["Next", m.next]]) {
+      if (!v) continue;
+      const p = el("div"); p.append(el("b", "", k), document.createTextNode(" " + v)); now.append(p);
+    }
+    now.hidden = !now.childElementCount;
+
+    const waiting = document.getElementById("waiting");
+    waiting.replaceChildren();
+    const mine = state.items.filter(i => i.status === "you").sort(byOrder);
+    if (mine.length) mine.forEach(i => waiting.append(row(i, true))); else waiting.append(el("p", "sub", "Nothing right now."));
+
+    const phases = document.getElementById("phases");
+    phases.replaceChildren();
+    const known = new Set(state.phases.map(p => p.key));
+    const list = [...state.phases].sort((a, b) => (a.order ?? 1e9) - (b.order ?? 1e9));
+    if (state.items.some(i => !known.has(i.phase))) list.push({ key: "", title: "Other", note: "" });
+    for (const ph of list) {
+      const items = state.items.filter(i => ph.key ? i.phase === ph.key : !known.has(i.phase)).sort(byOrder);
+      if (!items.length && !ph.note) continue;
+      const sec = el("section");
+      const done = items.filter(i => FINISHED.has(i.status)).length;
+      const counted = ph.key !== "P" && items.length;
+      sec.append(el("h2", "", (ph.key ? ph.key + ". " : "") + ph.title + (counted ? "  (" + done + "/" + items.length + " done)" : "")));
+      if (ph.note) sec.append(el("p", "phase-note", ph.note));
+      const box = el("div", "list"); items.forEach(i => box.append(row(i))); sec.append(box);
+      phases.append(sec);
+    }
+
+    const log = document.getElementById("log");
+    log.replaceChildren();
+    [...state.log].sort((a, b) => String(b.id).localeCompare(String(a.id))).forEach(e => {
+      const li = el("li"); li.append(el("span", "", e.date || ""), document.createTextNode(e.text || "")); log.append(li);
+    });
+    document.getElementById("log-section").hidden = !state.log.length;
+
+    if (focused) {
+      const f = document.getElementById(focused);
+      if (f) { f.focus(); if (sel && f.setSelectionRange) f.setSelectionRange(sel[0], sel[1]); }
+    }
+  }
+
+  // A frozen tracker carries its state in the snapshot block and never touches the database.
+  let snap = null;
+  try { snap = JSON.parse(document.getElementById("snapshot").textContent); } catch { snap = null; }
+  if (snap) {
+    Object.assign(state, { meta: snap.meta || null, phases: snap.phases || [], items: snap.items || [], log: snap.log || [], frozen: true });
+    render();
+    return;
+  }
+  render();
+
+  (async () => {
+    db = window.claude ? await window.claude.use("db") : null;
+    if (!db) { state.notice = "The tracker's data isn't available in this view."; render(); return; }
+    const user = await window.claude.use("user");
+    // Only editors and the owner write (the db rules say write: "admin"); without a user answer, a refused write decides.
+    state.canWrite = user ? await user.canEdit() : true;
+
+    const waitingFor = new Set(["meta", "phases", "items", "log", "answers"]);
+    const timer = setTimeout(() => { state.notice = "Can't reach the tracker's data yet; what you see may be out of date."; render(); }, 10000);
+    const settle = (name) => (s) => {
+      if (s && s.metadata && !s.metadata.fromCache && waitingFor.delete(name) && !waitingFor.size) { clearTimeout(timer); state.notice = ""; }
+      state.live = true; render();
+    };
+    const fail = (e) => { clearTimeout(timer); state.notice = "The tracker's data stopped updating (" + (e && e.code || "error") + "). Reload the page."; render(); };
+    const rows = (s) => s.docs.filter(d => d.exists).map(d => ({ id: d.id, ...d.data() }));
+
+    const onMeta = settle("meta"), onPhases = settle("phases"), onItems = settle("items"), onLog = settle("log"), onAnswers = settle("answers");
+    db.doc("meta/state").onSnapshot(s => { state.meta = s.exists ? s.data() : null; onMeta(s); }, fail);
+    db.collection("phases").onSnapshot(s => { state.phases = rows(s).map(p => ({ key: p.id, ...p })); onPhases(s); }, fail);
+    db.collection("items").onSnapshot(s => { state.items = rows(s).map(i => ({ code: i.id, ...i })); onItems(s); }, fail);
+    db.collection("log").onSnapshot(s => { state.log = rows(s); onLog(s); }, fail);
+    db.collection("answers").onSnapshot(s => { state.answers = Object.fromEntries(rows(s).map(a => [a.id, a])); onAnswers(s); }, fail);
+  })();
+})();
+</script>

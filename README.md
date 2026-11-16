@@ -72,6 +72,7 @@ See [`plugins/cli-tools/README.md`](plugins/cli-tools/README.md) for options and
 | code-comments | `/workflows:code-comments` | Rules for writing / reviewing inline code comments |
 | dotnet-xml-docs | `/workflows:dotnet-xml-docs` | XML doc comments for C# / VB.NET public APIs |
 | error-messages | `/workflows:error-messages` | Rules for writing / reviewing error message text |
+| work-tracker | `/workflows:work-tracker` | Live tracker page (claude.ai artifact with a database) for one multi-step job |
 
 ## Managing the plugins
 
@@ -97,7 +98,7 @@ claude plugin marketplace update claude-toolkit-plugins   # pull the latest afte
         ├── .claude-plugin/plugin.json
         └── skills/                     # crisp, karpathy, handoff, doc-coauthoring,
                                         #   technical-writing, code-comments, dotnet-xml-docs,
-                                        #   error-messages
+                                        #   error-messages, work-tracker
 ```
 
 ## Notes
