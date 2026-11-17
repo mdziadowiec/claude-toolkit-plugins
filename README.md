@@ -73,6 +73,7 @@ See [`plugins/cli-tools/README.md`](plugins/cli-tools/README.md) for options and
 | dotnet-xml-docs | `/workflows:dotnet-xml-docs` | XML doc comments for C# / VB.NET public APIs |
 | error-messages | `/workflows:error-messages` | Rules for writing / reviewing error message text |
 | work-tracker | `/workflows:work-tracker` | Live tracker page (claude.ai artifact with a database) for one multi-step job |
+| confluence-drawio | `/workflows:confluence-drawio` | Update draw.io diagrams and page text on Confluence Cloud pages |
 
 ## Managing the plugins
 
@@ -98,7 +99,7 @@ claude plugin marketplace update claude-toolkit-plugins   # pull the latest afte
         ├── .claude-plugin/plugin.json
         └── skills/                     # crisp, karpathy, handoff, doc-coauthoring,
                                         #   technical-writing, code-comments, dotnet-xml-docs,
-                                        #   error-messages, work-tracker
+                                        #   error-messages, work-tracker, confluence-drawio
 ```
 
 ## Notes
